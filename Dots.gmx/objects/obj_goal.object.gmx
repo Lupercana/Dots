@@ -11,9 +11,9 @@
     <event eventtype="4" ename="obj_dot">
       <action>
         <libid>1</libid>
-        <id>611</id>
-        <kind>6</kind>
-        <userelative>-1</userelative>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
         <isquestion>0</isquestion>
         <useapplyto>-1</useapplyto>
         <exetype>2</exetype>
@@ -25,27 +25,23 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>health</string>
-          </argument>
-          <argument>
-            <kind>0</kind>
-            <string>health - 1</string>
+            <string>--health;
+
+with (other)
+{
+    var fitness = steps_alive + global.GA_GOAL_FITNESS_BOOST;
+    if (fitness &gt; global.best_ga_fitness)
+    {
+        global.best_ga_fitness = fitness;
+        global.best_ga_direction = ga_direction;
+        global.best_ga_mov_length = ga_mov_length;
+    }
+}
+
+instance_destroy(other);
+</string>
           </argument>
         </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>203</id>
-        <kind>0</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_kill_object</functionname>
-        <codestring></codestring>
-        <whoName>other</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
       </action>
     </event>
   </events>

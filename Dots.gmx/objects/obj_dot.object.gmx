@@ -3,17 +3,17 @@
   <spriteName>sp_dot</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>0</depth>
+  <depth>-1</depth>
   <persistent>0</persistent>
-  <parentName>&lt;undefined&gt;</parentName>
+  <parentName>obj_avoid</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
-    <event eventtype="6" enumb="0">
+    <event eventtype="0" enumb="0">
       <action>
         <libid>1</libid>
-        <id>611</id>
-        <kind>6</kind>
-        <userelative>-1</userelative>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
         <isquestion>0</isquestion>
         <useapplyto>-1</useapplyto>
         <exetype>2</exetype>
@@ -25,27 +25,186 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.can_click</string>
-          </argument>
-          <argument>
-            <kind>0</kind>
-            <string>false</string>
+            <string>var rand = irandom(round(1 / global.PATH_DOT_CHANCE) - 1);
+
+// Local variables
+if (rand == 0) // 0: GA, 1: pathfinding
+    dot_type = 1;
+else
+    dot_type = 0;
+spd = irandom(global.MAX_DOT_SPEED - 1) + 1;
+target_goal = irandom(instance_number(obj_goal) - 1);
+current_ga_index = 0;
+steps_alive = 0;
+moved_amount = 0;
+ga_direction = ds_list_create();
+ga_mov_length = ds_list_create();
+
+if (dot_type == 0) // GA command generation
+{
+    ga_direction = global.best_ga_direction;
+    ga_mov_length = global.best_ga_mov_length;
+    
+    // Mutation
+    var i;
+    for (i = 0; i &lt; global.GA_MUTATION_OPERATIONS; ++i)
+    {
+        var new_dir = random(360);
+        var new_mov = random(global.GA_MAX_MOVE_LENGTH);
+    
+        var mutation = irandom(1);
+        if (ds_list_empty(ga_direction))
+        {
+            mutation = 0;   
+        }
+        if (mutation == 1) // mutate existing
+        {
+            var index = irandom(ds_list_size(ga_direction) - 1);
+            ga_direction[| index] = new_dir;
+            ga_mov_length[| index] = new_mov;
+        }
+        else // add on
+        {
+            ds_list_add(ga_direction, new_dir);
+            ds_list_add(ga_mov_length, new_mov);
+        }
+    }
+}
+
+</string>
           </argument>
         </arguments>
       </action>
+    </event>
+    <event eventtype="3" enumb="0">
       <action>
         <libid>1</libid>
-        <id>203</id>
-        <kind>0</kind>
+        <id>603</id>
+        <kind>7</kind>
         <userelative>0</userelative>
         <isquestion>0</isquestion>
         <useapplyto>-1</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_kill_object</functionname>
+        <exetype>2</exetype>
+        <functionname></functionname>
         <codestring></codestring>
         <whoName>self</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>if (dot_type == 0) // GA
+{
+    if (steps_alive &gt; global.GA_EXECUTE_TIME * room_speed)
+    {
+        var inst = instance_find(obj_goal, target_goal);
+        var fitness = steps_alive + global.GA_DIST_MULTIPLIER * (1 / point_distance(x, y, inst.x, inst.y)); // TODO: change to closest goal
+        if (fitness &gt; global.best_ga_fitness)
+        {
+            global.best_ga_fitness = fitness;
+            global.best_ga_direction = ga_direction;
+            global.best_ga_mov_length = ga_mov_length;
+        }
+        instance_destroy(self);
+    }
+
+    var ga_dir = ga_direction[| current_ga_index];
+    var ga_mov = ga_mov_length[| current_ga_index];
+    var move_dist = max(spd, spd - ga_mov);
+    var future_x = dcos(ga_dir) * move_dist + x;
+    var future_y = dsin(ga_dir) * move_dist + y;
+    moved_amount += move_dist;
+    
+    if (!place_meeting(future_x, future_y, obj_wall))
+    {
+        x = future_x;
+        y = future_y;
+    }
+    
+    if (moved_amount &gt;= ga_mov) // Prevents blocky movements
+    {
+        moved_amount = 0;
+        ++current_ga_index;
+        if (current_ga_index &gt;= ds_list_size(ga_direction))
+            current_ga_index = 0;
+    }
+}
+else if (dot_type == 1) // pathfinding
+{
+    var inst = instance_find(obj_goal, target_goal);
+    mp_potential_step_object(inst.x, inst.y, spd, obj_avoid);
+}
+
+++steps_alive;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="4" ename="obj_dot">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>// Move in random direction to no longer be in collision
+var random_dir = random(360);
+var future_x = dcos(random_dir) * spd + x;
+var future_y = dsin(random_dir) * spd + y;
+
+if (!place_meeting(future_x, future_y, obj_wall))
+{
+    x = future_x;
+    y = future_y;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="6" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>global.can_click = false;
+
+var inst = instance_find(obj_goal, target_goal);
+var fitness = steps_alive + global.GA_DIST_MULTIPLIER * (1 / point_distance(x, y, inst.x, inst.y)); // TODO: change to closest goal
+if (fitness &gt; global.best_ga_fitness)
+{
+    global.best_ga_fitness = fitness;
+    global.best_ga_direction = ga_direction;
+    global.best_ga_mov_length = ga_mov_length;
+}
+
+instance_destroy(self);
+</string>
+          </argument>
+        </arguments>
       </action>
     </event>
   </events>

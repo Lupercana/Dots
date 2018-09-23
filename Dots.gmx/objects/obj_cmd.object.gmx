@@ -25,14 +25,31 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// Paramters
+            <string>randomize();
+
+// Parameters
 LEVEL_TIMER = 60; // seconds
 LIVES = 3;
 CLICK_CD = 0.5 // seconds
 
+// Global paramters
+global.MAX_DOTS = 100;
+global.PATH_DOT_CHANCE = 0.01;
+global.DOT_TYPE_NUM = 2; // 0: GA, 1: pathfinding
+global.MAX_DOT_SPEED = 5;
+global.GA_MUTATION_OPERATIONS = 100;
+global.GA_GOAL_FITNESS_BOOST = 1800;
+global.GA_DIST_MULTIPLIER = room_width;
+global.GA_MAX_MOVE_LENGTH = room_width;
+global.GA_EXECUTE_TIME = 10; // Kill dots if longer than this
+
+
 // Global variables
 health = LIVES;
 global.can_click = true;
+global.best_ga_fitness = 0; // higher fitness is better
+global.best_ga_direction = ds_list_create();
+global.best_ga_mov_length = ds_list_create();
 
 // Local variables
 timer = LEVEL_TIMER;
@@ -112,7 +129,7 @@ alarm[0] = room_speed;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (timer &lt;= 0)
+            <string>if (timer &lt; 0)
 {
     // Level is done!
     if (room_exists(room + 1))
@@ -169,7 +186,7 @@ if (!global.can_click &amp;&amp; !click_cd_set)
             <kind>1</kind>
             <string>var i;
 
-for (i = 0; i &lt; health; i++)
+for (i = 0; i &lt; health; ++i)
 {
     draw_sprite(sp_heart, 0, room_width - LIVES * sprite_get_width(sp_heart) + i * sprite_get_width(sp_heart), 0);
 }

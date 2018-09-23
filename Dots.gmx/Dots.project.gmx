@@ -19,6 +19,7 @@
   </fonts>
   <objects name="objects">
     <object>objects\obj_cmd</object>
+    <object>objects\obj_avoid</object>
     <object>objects\obj_dot</object>
     <object>objects\obj_spawn</object>
     <object>objects\obj_goal</object>
