@@ -10,9 +10,13 @@
     <sprite>sprites\sp_spawn</sprite>
     <sprite>sprites\sp_goal</sprite>
     <sprite>sprites\sp_wall</sprite>
+    <sprite>sprites\sp_heart</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <fonts name="fonts">
+    <font>fonts\fnt_gui</font>
+  </fonts>
   <objects name="objects">
     <object>objects\obj_cmd</object>
     <object>objects\obj_dot</object>
