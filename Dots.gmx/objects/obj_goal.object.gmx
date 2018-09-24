@@ -33,8 +33,8 @@ with (other)
     if (fitness &gt; global.best_ga_fitness)
     {
         global.best_ga_fitness = fitness;
-        global.best_ga_direction = ga_direction;
-        global.best_ga_mov_length = ga_mov_length;
+        ds_list_copy(global.best_ga_direction, ga_direction);
+        ds_list_copy(global.best_ga_mov_length, ga_mov_length);
     }
 }
 

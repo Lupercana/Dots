@@ -42,8 +42,8 @@ ga_mov_length = ds_list_create();
 
 if (dot_type == 0) // GA command generation
 {
-    ga_direction = global.best_ga_direction;
-    ga_mov_length = global.best_ga_mov_length;
+    ds_list_copy(ga_direction, global.best_ga_direction);
+    ds_list_copy(ga_mov_length, global.best_ga_mov_length);
     
     // Mutation
     var i;
@@ -102,8 +102,8 @@ if (dot_type == 0) // GA command generation
         if (fitness &gt; global.best_ga_fitness)
         {
             global.best_ga_fitness = fitness;
-            global.best_ga_direction = ga_direction;
-            global.best_ga_mov_length = ga_mov_length;
+            ds_list_copy(global.best_ga_direction, ga_direction);
+            ds_list_copy(global.best_ga_mov_length, ga_mov_length);
         }
         instance_destroy(self);
     }
@@ -197,8 +197,8 @@ var fitness = steps_alive + global.GA_DIST_MULTIPLIER * (1 / point_distance(x, y
 if (fitness &gt; global.best_ga_fitness)
 {
     global.best_ga_fitness = fitness;
-    global.best_ga_direction = ga_direction;
-    global.best_ga_mov_length = ga_mov_length;
+    ds_list_copy(global.best_ga_direction, ga_direction);
+    ds_list_copy(global.best_ga_mov_length, ga_mov_length);
 }
 
 instance_destroy(self);
