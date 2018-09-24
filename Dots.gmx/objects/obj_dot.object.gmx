@@ -39,6 +39,8 @@ steps_alive = 0;
 moved_amount = 0;
 ga_direction = ds_list_create();
 ga_mov_length = ds_list_create();
+prev_x = x;
+prev_y = y;
 
 if (dot_type == 0) // GA command generation
 {
@@ -131,8 +133,14 @@ if (dot_type == 0) // GA command generation
 }
 else if (dot_type == 1) // pathfinding
 {
+    var new_dir = point_direction(prev_x, prev_y, x, y);
+    var new_mov = point_distance(prev_x, prev_y, x, y);
+    ds_list_add(ga_direction, new_dir);
+    ds_list_add(ga_mov_length, new_mov);
     var inst = instance_find(obj_goal, target_goal);
     mp_potential_step_object(inst.x, inst.y, spd, obj_avoid);
+    prev_x = x;
+    prev_y = y;
 }
 
 ++steps_alive;

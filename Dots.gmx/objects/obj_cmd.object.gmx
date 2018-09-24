@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>0</depth>
-  <persistent>-1</persistent>
+  <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -36,7 +36,7 @@ CLICK_CD = 0.5 // seconds
 global.MAX_DOTS = 100;
 global.PATH_DOT_CHANCE = 0.01;
 global.DOT_TYPE_NUM = 2; // 0: GA, 1: pathfinding
-global.MAX_DOT_SPEED = 5;
+global.MAX_DOT_SPEED = 10;
 global.GA_MUTATION_OPERATIONS = 10;
 global.GA_GOAL_FITNESS_BOOST = 1800;
 global.GA_DIST_MULTIPLIER = room_width;
@@ -55,6 +55,7 @@ global.best_ga_mov_length = ds_list_create();
 timer = LEVEL_TIMER;
 click_cd_count = CLICK_CD * room_speed;
 click_cd_set = false;
+keep_going = false;
 
 alarm[0] = room_speed;
 </string>
@@ -155,6 +156,14 @@ if (click_cd_set)
     }
     else
         ++click_cd_count;
+}
+
+if (health &lt;= 0 &amp;&amp; !keep_going)
+{
+    if (show_question("You lost! But since we're testing, keep going?"))
+        keep_going = true;
+    else
+        game_end();
 }
 
 if (!global.can_click &amp;&amp; !click_cd_set)

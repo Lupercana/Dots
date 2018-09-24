@@ -27,6 +27,10 @@
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_lv_1</room>
+    <room>rooms\rm_lv_2</room>
+    <room>rooms\rm_lv_3</room>
+    <room>rooms\rm_lv_4</room>
+    <room>rooms\rm_lv_5</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>
